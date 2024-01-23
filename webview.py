@@ -111,11 +111,11 @@ class Webview:
         webview_bind_fn_t=CFUNCTYPE(None,c_char_p,c_char_p,c_void_p)
          
         _webview_bind(self.pwebview,name.encode('utf8'),cast(webview_bind_fn_t(wrapped_fn),c_void_p).value,None)
-    def dispatch(self,fn:Callable[[c_void_p],None],args:c_void_p)->None:
+    def dispatch(self,fn:Callable[[],None])->None:
         def wrapped_fn(_w:webview_t,_arg:c_void_p):
-            fn(_w,_arg)
+            fn()
         webview_dispatch_fn_t=CFUNCTYPE(None,webview_t,c_void_p)
-        _webview_dispatch(w,cast(webview_dispatch_fn_t(wrapped_fn),c_void_p).value,args)
+        _webview_dispatch(self.pwebview,cast(webview_dispatch_fn_t(wrapped_fn),c_void_p).value,None)
     def unbind(self,name:str)->None:
         _webview_unbind(self.pwebview,name.encode('utf8'))
     def get_window(self)->HWND:

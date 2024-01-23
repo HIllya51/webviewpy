@@ -44,4 +44,7 @@ if __name__=='__main__':
         wv.bind('increment',(increment))
         wv.bind('compute',(compute))
         wv.set_html(html)  
+        def haha():
+            print("?")
+        wv.dispatch(haha)
         wv.run()
