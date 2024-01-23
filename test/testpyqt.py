@@ -6,7 +6,7 @@ from webviewpy import Webview
 app = QApplication(sys.argv)
 class _QW(QWidget):
     def resizeEvent(self, a0: QResizeEvent) -> None:  
-        self.wv.set_size(a0.size().width(),a0.size().height()) 
+        self.wv.set_geo(10,10,a0.size().width()-20,a0.size().height()-20) 
         
          
 window = _QW()

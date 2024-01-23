@@ -37,7 +37,9 @@ _webview_destroy.argtypes=webview_t,
 _webview_set_title=_webview.webview_set_title
 _webview_set_title.argtypes=webview_t,c_char_p
 _webview_set_size=_webview.webview_set_size
+_webview_set_geo=_webview.webview_set_geo
 _webview_set_size.argtypes=webview_t,c_int,c_int,c_int
+_webview_set_geo.argtypes=webview_t,c_int,c_int,c_int,c_int
 _webview_set_html=_webview.webview_set_html
 _webview_set_html.argtypes=webview_t,c_char_p
 _webview_run=_webview.webview_run
@@ -139,6 +141,8 @@ class Webview:
         _webview_set_html(self.pwebview,html.encode('utf8'))
     def set_size(self,width:int,height:int,hints:SizeHints =SizeHints.WEBVIEW_HINT_NONE)->None:
         _webview_set_size(self.pwebview,width,height,hints)
+    def set_geo(self,X:int,Y:int,width:int,height:int)->None:
+        _webview_set_geo(self.pwebview,X,Y,width,height)
     def set_title(self,title:str)->None:
         _webview_set_title(self.pwebview,title.encode('utf8'))
     def terminate(self):

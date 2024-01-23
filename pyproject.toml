@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "webviewpy"
-version = "0.0.1"
+version = "0.0.2"
 authors = [
   { name="HIllya51", email="1871535768@qq.com" },
 ]
