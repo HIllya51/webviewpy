@@ -1,1 +1,3 @@
 *.pyc
+dist
+webviewpy/__version__.py

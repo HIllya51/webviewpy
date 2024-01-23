@@ -1,0 +1,15 @@
+.gitattributes
+.gitignore
+LICENSE
+README.md
+pyproject.toml
+test/test.py
+test/testpyqt.py
+webviewpy/__init__.py
+webviewpy/__version__.py
+webviewpy.egg-info/PKG-INFO
+webviewpy.egg-info/SOURCES.txt
+webviewpy.egg-info/dependency_links.txt
+webviewpy.egg-info/top_level.txt
+webviewpy/platform/win32/x64/webview.dll
+webviewpy/platform/win32/x86/webview.dll

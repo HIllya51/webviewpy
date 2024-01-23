@@ -1,11 +1,15 @@
-import platform,os
+import platform,os,sys
 from ctypes import CDLL,c_int,c_void_p,c_char_p,Structure,c_uint,c_char,POINTER,CFUNCTYPE,cast,pointer
 from typing import Callable,Union,Tuple
-
 HWND=c_void_p
 webview_t=c_void_p
 isbit64= platform.architecture()[0]=='64bit'
-DLL3264path=os.path.abspath('DLL'+('32','64')[isbit64])
+DLL3264path=os.path.abspath(os.path.join(os.path.dirname(__file__),'platform',sys.platform, ('x86','x64')[isbit64]))
+
+try:
+    _webview=CDLL(os.path.join(DLL3264path,'webview'))
+except :
+    raise Exception('load module "{}" failed'.format(os.path.join(DLL3264path,'webview')))
 class webview_version_t(Structure):
     _fields_=[
         ('major',c_uint),
@@ -24,7 +28,7 @@ class SizeHints(c_int):
     WEBVIEW_HINT_MIN=1
     WEBVIEW_HINT_MAX=2
     WEBVIEW_HINT_FIXED=3
-_webview=CDLL(os.path.join(DLL3264path,'webview.dll'))
+
 _webview_create=_webview.webview_create
 _webview_create.argtypes=c_int,c_void_p
 _webview_create.restype=webview_t

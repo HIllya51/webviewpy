@@ -1,4 +1,4 @@
-from webview import Webview
+from webviewpy import Webview
 if __name__=='__main__':
      
 

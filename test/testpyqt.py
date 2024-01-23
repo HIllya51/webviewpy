@@ -1,7 +1,7 @@
 import sys 
 from PyQt5.QtGui import QResizeEvent
 from PyQt5.QtWidgets import QApplication, QWidget
-from webview import Webview
+from webviewpy import Webview
 
 app = QApplication(sys.argv)
 class _QW(QWidget):
