@@ -1,11 +1,8 @@
 # webviewpy
 
-ctypes binding of webview
-
-No any requirements
+A tiny webview library for Python.
 
 Based on [webview](https://github.com/webview/webview)
-
 
 
 # Getting started
@@ -25,3 +22,8 @@ git clone [webview](https://github.com/webview/webview) and build the dynalib or
 
 copy the library file to webviewpy/platform/[linux or darwin]/[x86 or x64]
 
+### Usage
+
+[Build a webview based app](https://github.com/HIllya51/webviewpy/tree/main/test)
+
+[Embed a webview in you window like QWidget](https://github.com/HIllya51/webviewpy/blob/main/test/testpyqt.py)
