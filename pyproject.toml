@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools", "setuptools_scm[toml]"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "webviewpy"
+version = "1.1.0"
+authors = [
+  { name="HIllya51"},
+]
+license = { file = "LICENSE" }
+description = "ctypes binding of webview"
+readme = "README.md"
+
+requires-python = ">=3.7"
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+[project.urls]
+Homepage = "https://github.com/HIllya51/webviewpy"
+Repository = "https://github.com/HIllya51/webviewpy"
+
+[tool.setuptools]
+include-package-data = false
+packages = ["webviewpy", "webviewpy.platform"]
+
+[tool.setuptools.package-data]
+"webviewpy.platform" = ["**/*.dll","**/*.so","**/*.dylib"]
+
+[tool.setuptools_scm]
+write_to = "webviewpy/__version__.py"

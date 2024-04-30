@@ -1,0 +1,61 @@
+name: Build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, windows-2019, macos-11]
+        arch: [x86, x64]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: python cibuildlib.py ${{matrix.arch}}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{matrix.os}}${{matrix.arch}}
+          path: ./webview/build
+  release:
+    runs-on: windows-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install build setuptools
+      - name: Restore artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: build
+      
+      - run: python cibuildlib.py release
+      
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: ./dist
+          
+      # - name: Release
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     tag_name: ${{ github.event.inputs.create_release }}
+      #     files: ./dist/*
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
