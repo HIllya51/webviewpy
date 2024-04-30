@@ -23,6 +23,10 @@ pip install webviewpy
 
 [Embed a webview in tkinter](example/testtkinter.py)
 
+
+[Build a webview based app with react and PyQt](example/fluent/main.py)
+
+
 ### Specify library path
 
 
