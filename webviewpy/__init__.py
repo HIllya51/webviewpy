@@ -11,9 +11,6 @@ from ctypes import (
     CFUNCTYPE,
     cast,
 )
-from typing import Callable, Union, Tuple, TypeVar, Optional
-
-SerializableType = TypeVar("SerializableType")
 
 
 class webview_t(c_void_p):
@@ -206,26 +203,8 @@ class Webview:
         instance = super().__new__(cls)
         return instance
 
-    def __init__(self, debug: bool = False, window: c_void_p = None) -> None:
-        """
-        * Creates a new webview instance.
-        *
-        * @param debug Enable developer tools if supported by the backend.
-        * @param window Optional native window handle, i.e. @c GtkWindow pointer
-        *        @c NSWindow pointer (Cocoa) or @c HWND (Win32). If non-null,
-        *        the webview widget is embedded into the given window, and the
-        *        caller is expected to assume responsibility for the window as
-        *        well as application lifecycle. If the window handle is null,
-        *        a new window is created and both the window and application
-        *        lifecycle are managed by the webview instance.
-        * @remark Win32: The function also accepts a pointer to @c HWND (Win32) in the
-        *         window parameter for backward compatibility.
-        * @remark Win32/WebView2: @c CoInitializeEx should be called with
-        *         @c COINIT_APARTMENTTHREADED before attempting to call this function
-        *         with an existing window. Omitting this step may cause WebView2
-        *         initialization to fail.
-        * @return Webview object.
-        """
+    def __init__(self, debug=False, window=None):
+
         self.pwebview = None
         _w = webview_create(debug, window)
         if _w.value is None:
@@ -233,50 +212,18 @@ class Webview:
         self.pwebview = _w
         self.keepref = []
 
-    def resolve(self, id: str, status: int, result: str) -> webview_error_t:
-        """
-        * Responds to a binding call from the JS side.
-        *
-        * @param id The identifier of the binding call. Pass along the value received
-        *           in the binding handler (see webview_bind()).
-        * @param status A status of zero tells the JS side that the binding call was
-        *               succesful; any other value indicates an error.
-        * @param result The result of the binding call to be returned to the JS side.
-        *               This must either be a valid JSON value or an empty string for
-        *               the primitive JS value @c undefined.
-        """
+    def resolve(self, id, status, result):
         return webview_return(
             self.pwebview, id.encode("utf8"), status, result.encode("utf8")
         )
 
     def bind(
         self,
-        name: str,
-        fn: Callable[
-            [
-                Optional[Callable[SerializableType, None]],
-                ...,
-            ],
-            Union[None, SerializableType],
-        ],
+        name,
+        fn,
         is_async_return=False,
-    ) -> webview_error_t:
-        """
-        * Binds a function pointer to a new global JavaScript function.
-        *
-        * Internally, JS glue code is injected to create the JS function by the
-        * given name. The callback function is passed a request identifier,
-        * a request string and a user-provided argument. The request string is
-        * a JSON array of the arguments passed to the JS function.
-        *
-        * @param name Name of the JS function.
-        * @param fn Callback function.
-        * @param arg User argument.
-        * @retval WEBVIEW_ERROR_DUPLICATE
-        *         A binding already exists with the specified name.
-        """
-
-        def wrapped_fn(is_async_return, seq: c_char_p, req: c_char_p, args: c_void_p):
+    ):
+        def wrapped_fn(is_async_return, seq, req, args):
             seq = seq.decode("utf8")
 
             if is_async_return:
@@ -301,89 +248,33 @@ class Webview:
             None,
         )
 
-    def dispatch(self, fn: Callable[[], None]) -> webview_error_t:
-        """
-        * Schedules a function to be invoked on the thread with the run/event loop.
-        * Use this function e.g. to interact with the library or native handles.
-        *
-        * @param fn The function to be invoked.
-        * @param arg An optional argument passed along to the callback function.
-        """
-
-        def wrapped_fn(_w: webview_t, _arg: c_void_p):
+    def dispatch(self, fn):
+        def wrapped_fn(_w, _arg):
             fn()
 
         _funcptr = webview_dispatch_fn_t(wrapped_fn)
         self.keepref.append(_funcptr)
         return webview_dispatch(self.pwebview, cast(_funcptr, c_void_p).value, None)
 
-    def unbind(self, name: str) -> webview_error_t:
-        """
-        * Removes a binding created with webview_bind().
-        *
-        * @param name Name of the binding.
-        * @retval WEBVIEW_ERROR_NOT_FOUND No binding exists with the specified name.
-        """
+    def unbind(self, name):
         return webview_unbind(self.pwebview, name.encode("utf8"))
 
-    def get_window(self) -> c_void_p:
-        """
-        * Returns the native handle of the window associated with the webview instance.
-        * The handle can be a @c GtkWindow pointer (GTK), @c NSWindow pointer (Cocoa)
-        * or @c HWND (Win32).
-        *
-        * @return The handle of the native window.
-        """
+    def get_window(self):
         return webview_get_window(self.pwebview)
 
-    def get_native_handle(self, kind: webview_native_handle_kind_t) -> c_void_p:
-        """
-        * Get a native handle of choice.
-        *
-        * @param kind The kind of handle to retrieve.
-        * @return The native handle or @c NULL.
-        * @since 0.11
-        """
+    def get_native_handle(self, kind):
         return webview_get_native_handle(self.pwebview, kind)
 
-    def eval(self, js: str) -> webview_error_t:
-        """
-        * Evaluates arbitrary JavaScript code.
-        *
-        * Use bindings if you need to communicate the result of the evaluation.
-        *
-        * @param js JS content.
-        """
+    def eval(self, js):
         return webview_eval(self.pwebview, js.encode("utf8"))
 
-    def navigate(self, url: str) -> webview_error_t:
-        """
-        * Navigates webview to the given URL. URL may be a properly encoded data URI.
-        *
-        * Example:
-        * @code{.c}
-        * webview_navigate(w, "https://github.com/webview/webview");
-        * webview_navigate(w, "data:text/html,%3Ch1%3EHello%3C%2Fh1%3E");
-        * webview_navigate(w, "data:text/html;base64,PGgxPkhlbGxvPC9oMT4=");
-        * @endcode
-        *
-        * @param url URL.
-        """
+    def navigate(self, url):
         return webview_navigate(self.pwebview, url.encode("utf8"))
 
-    def init(self, js: str) -> webview_error_t:
-        """
-        * Injects JavaScript code to be executed immediately upon loading a page.
-        * The code will be executed before @c window.onload.
-        *
-        * @param js JS content.
-        """
+    def init(self, js):
         return webview_init(self.pwebview, js.encode("utf8"))
 
-    def destroy(self) -> webview_error_t:
-        """
-        * Destroys a webview instance and closes the native window.
-        """
+    def destroy(self):
         if self.pwebview:
             _ = webview_destroy(self.pwebview)
             self.pwebview = None
@@ -394,60 +285,28 @@ class Webview:
     def __del__(self) -> None:
         self.destroy()
 
-    def run(self) -> webview_error_t:
-        """
-        * Runs the main loop until it's terminated.
-        """
+    def run(self):
         return webview_run(self.pwebview)
 
-    def set_html(self, html: str) -> webview_error_t:
-        """
-        * Load HTML content into the webview.
-        *
-        * Example:
-        * @code{.c}
-        * webview_set_html(w, "<h1>Hello</h1>");
-        * @endcode
-        *
-        * @param html HTML content.
-        """
+    def set_html(self, html):
         return webview_set_html(self.pwebview, html.encode("utf8"))
 
     def set_size(
         self,
-        width: int,
-        height: int,
-        hints: webview_hint_t = webview_hint_t.WEBVIEW_HINT_NONE,
-    ) -> webview_error_t:
-        """
-        * Updates the size of the native window.
-        *
-        * @param width New width.
-        * @param height New height.
-        * @param hints Size hints.
-        """
+        width,
+        height,
+        hints=webview_hint_t.WEBVIEW_HINT_NONE,
+    ):
         return webview_set_size(self.pwebview, width, height, hints)
 
-    def set_title(self, title: str) -> webview_error_t:
-        """
-        * Updates the title of the native window.
-        *
-        * @param title The new title.
-        """
+    def set_title(self, title):
         return webview_set_title(self.pwebview, title.encode("utf8"))
 
-    def terminate(self) -> webview_error_t:
-        """
-        * Stops the main loop. It is safe to call this function from another other
-        * background thread.
-        """
+    def terminate(self):
         return webview_terminate(self.pwebview)
 
     @staticmethod
-    def version() -> Webview_Version:
-        """
-        * Get the library's version information.
-        """
+    def version():
         return Webview_Version(webview_version())
 
 
