@@ -31,10 +31,13 @@ Repository = "https://github.com/HIllya51/webviewpy"
 
 [tool.setuptools]
 include-package-data = false
-packages = ["webviewpy", "webviewpy.platform"]
+packages = ["webviewpy", "webviewpy.platform", "webviewpy.tools", "webviewpy.tools.__pyinstaller"]
 
 [tool.setuptools.package-data]
 "webviewpy.platform" = ["**/*.dll","**/*.so","**/*.dylib"]
 
 [tool.setuptools_scm]
 write_to = "webviewpy/__version__.py"
+
+[project.entry-points.pyinstaller40]
+hook-dirs = "webviewpy.tools.__pyinstaller:get_hook_dirs"
