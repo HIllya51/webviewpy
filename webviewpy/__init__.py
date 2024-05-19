@@ -12,6 +12,8 @@ from ctypes import (
     cast,
 )
 
+from webviewpy.tools import get_dll_path
+
 
 class webview_t(c_void_p):
     pass
@@ -102,21 +104,7 @@ class webview_exception(Exception):
     pass
 
 
-isbit64 = platform.architecture()[0] == "64bit"
-DLL3264path = os.path.abspath(
-    os.path.join(
-        os.path.dirname(__file__), "platform", sys.platform, ("x86", "x64")[isbit64]
-    )
-)
-if sys.platform == "win32":
-    targetdllname = "webview.dll"
-elif sys.platform == "linux":
-    targetdllname = "libwebview.so"
-elif sys.platform == "darwin":
-    targetdllname = "libwebview.dylib"
-else:
-    targetdllname = "webview"
-webviewdll = os.path.join(DLL3264path, targetdllname)
+webviewdll = get_dll_path()
 
 
 webview_dispatch_fn_t = CFUNCTYPE(None, webview_t, c_void_p)
