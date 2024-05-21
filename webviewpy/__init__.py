@@ -102,21 +102,24 @@ class webview_exception(Exception):
     pass
 
 
-isbit64 = platform.architecture()[0] == "64bit"
-DLL3264path = os.path.abspath(
-    os.path.join(
-        os.path.dirname(__file__), "platform", sys.platform, ("x86", "x64")[isbit64]
+def get_library_path():
+    is_64bit = platform.architecture()[0] == "64bit"
+    library_base_path = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__), "platform", sys.platform, ("x86", "x64")[is_64bit]
+        )
     )
-)
-if sys.platform == "win32":
-    targetdllname = "webview.dll"
-elif sys.platform == "linux":
-    targetdllname = "libwebview.so"
-elif sys.platform == "darwin":
-    targetdllname = "libwebview.dylib"
-else:
-    targetdllname = "webview"
-webviewdll = os.path.join(DLL3264path, targetdllname)
+    if sys.platform == "win32":
+        target_library_name = "webview.dll"
+    elif sys.platform == "linux":
+        target_library_name = "libwebview.so"
+    elif sys.platform == "darwin":
+        target_library_name = "libwebview.dylib"
+    else:
+        target_library_name = "webview"
+    return os.path.join(library_base_path, target_library_name)
+
+webviewdll = get_library_path()
 
 
 webview_dispatch_fn_t = CFUNCTYPE(None, webview_t, c_void_p)
@@ -313,6 +316,7 @@ class Webview:
 __all__ = [
     getattr(_, "__name__")
     for _ in [
+        get_library_path,
         declare_library_path,
         webview_hint_t,
         webview_error_t,
