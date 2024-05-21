@@ -1,3 +1,3 @@
-from webviewpy.tools import get_dll_path
+import webviewpy
 
-datas = [(get_dll_path(), '.')]
+datas = [(webviewpy.get_library_path(), '.')]
