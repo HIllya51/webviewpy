@@ -61,9 +61,6 @@ class webview_exception(Exception):
     pass
 
 
-def get_library_path():
-    ...
-
 def declare_library_path(librarypath=None, exception=True):
     ...
 
