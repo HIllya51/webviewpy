@@ -23,6 +23,7 @@ pip install webviewpy
 
 [Embed a webview in tkinter](example/testtkinter.py)
 
+[Embed a webview in win32 window](example/win32.py)
 
 [Build a webview based app with react and PyQt](example/fluent/main.py)
 
