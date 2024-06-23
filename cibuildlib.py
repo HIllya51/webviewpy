@@ -24,7 +24,7 @@ if sys.argv[1]=='release':
 arch=sys.argv[1]
 curr=os.getcwd()
 print(curr)
-os.system("git clone https://github.com/HIllya51/webview")
+os.system("git clone https://github.com/webview/webview")
 os.chdir(f'{curr}/webview')
 os.makedirs(f'{curr}/platform/{sys.platform}')
 os.makedirs(f'{curr}/platform/{sys.platform}/x86')
