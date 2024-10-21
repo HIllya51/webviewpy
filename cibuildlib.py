@@ -21,16 +21,16 @@ if len(sys.argv) >= 2 and sys.argv[1] == "release":
         or shutil.copy(f, d)
     )
 
-    copy("./build/windows-2022/x86/bin/webview.dll", "./webviewpy/platform/win32/x86")
-    copy("./build/windows-2022/x64/bin/webview.dll", "./webviewpy/platform/win32/x64")
+    copy("./build/windows-2022/x86/bin/Release/webview.dll", "./webviewpy/platform/win32/x86")
+    copy("./build/windows-2022/x64/bin/Release/webview.dll", "./webviewpy/platform/win32/x64")
     # copy('./build/ubuntu-20.04x86/library/libwebview.so','./webviewpy/platform/linux/x86')
     copy(
-        "./build/ubuntu-22.04/x64/bin/libwebview.so",
+        "./build/ubuntu-22.04/x64/bin/Release/libwebview.so",
         "./webviewpy/platform/linux/x64",
     )
     # copy('./build/macos-11x86/library/libwebview.dylib','./webviewpy/platform/darwin/x86')
     copy(
-        "./build/macos-14/x64/bin/libwebview.dylib",
+        "./build/macos-14/x64/bin/Release/libwebview.dylib",
         "./webviewpy/platform/darwin/x64",
     )
     os.system("python -m build")
