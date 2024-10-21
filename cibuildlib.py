@@ -15,12 +15,12 @@ if len(sys.argv) >= 2 and sys.argv[1] == "release":
     listdir()
     filepath = os.path.dirname(__file__)
     os.chdir(filepath)
-    copy = lambda f, d: [
-        print(os.path.abspath(d)),
-        print(os.path.abspath(f)),
-        os.makedirs(d, exist_ok=True),
-        shutil.copy(f, d),
-    ]
+    copy = (
+        lambda f, d: print(os.path.exists(f), os.path.abspath(f), os.path.abspath(d))
+        or os.makedirs(d, exist_ok=True)
+        or shutil.copy(f, d)
+    )
+
     copy("./build/windows-2022/x86/bin/webview.dll", "./webviewpy/platform/win32/x86")
     copy("./build/windows-2022/x64/bin/webview.dll", "./webviewpy/platform/win32/x64")
     # copy('./build/ubuntu-20.04x86/library/libwebview.so','./webviewpy/platform/linux/x86')
