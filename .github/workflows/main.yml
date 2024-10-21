@@ -28,7 +28,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: ${{matrix.os}}
-          path: ./webview/build
+          path: ./build
   release:
     runs-on: windows-latest
     needs: build
