@@ -60,8 +60,8 @@ sudo apt-get update && sudo apt-get install libwebkit2gtk-4.0-dev xvfb -y
 """
     )
     os.system("cmake -B ./build/x64")
-    os.system("cmake --build ./build/x64 --config Release --target ALL_BUILD")
+    os.system("cmake --build ./build/x64 --config Release")
 elif sys.platform == "darwin":
     os.system("cmake -B ./build/x64")
-    os.system("cmake --build ./build/x64 --config Release --target ALL_BUILD")
+    os.system("cmake --build ./build/x64 --config Release")
 os.chdir(curr)
