@@ -15,13 +15,13 @@ if len(sys.argv) >= 2 and sys.argv[1] == "release":
     listdir()
     filepath = os.path.dirname(__file__)
     os.chdir(filepath)
-    copy = lambda f, d: os.makedirs(d) or shutil.copy(f, d)
-    copy(
-        "./build/windows-2022/x86/bin/webview.dll", "./webviewpy/platform/win32/x86"
-    )
-    copy(
-        "./build/windows-2022/x64/bin/webview.dll", "./webviewpy/platform/win32/x64"
-    )
+    copy = lambda f, d: [
+        print(os.path.abspath(d)),
+        os.makedirs(d, exist_ok=True),
+        shutil.copy(f, d),
+    ]
+    copy("./build/windows-2022/x86/bin/webview.dll", "./webviewpy/platform/win32/x86")
+    copy("./build/windows-2022/x64/bin/webview.dll", "./webviewpy/platform/win32/x64")
     # copy('./build/ubuntu-20.04x86/library/libwebview.so','./webviewpy/platform/linux/x86')
     copy(
         "./build/ubuntu-22.04/x64/bin/libwebview.so",
@@ -38,9 +38,6 @@ if len(sys.argv) >= 2 and sys.argv[1] == "release":
 
 curr = os.getcwd()
 print(curr)
-os.makedirs(f"{curr}/platform/{sys.platform}", exist_ok=True)
-os.makedirs(f"{curr}/platform/{sys.platform}/x86", exist_ok=True)
-os.makedirs(f"{curr}/platform/{sys.platform}/x64", exist_ok=True)
 if sys.platform == "win32":
     os.system("cmake -A win32 -T host=x86 -B ./build/x86")
     os.system("cmake --build ./build/x86 --config Release --target ALL_BUILD")
