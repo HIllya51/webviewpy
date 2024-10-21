@@ -12,8 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, windows-2019, macos-11]
-        arch: [x86, x64]
+        os: [ubuntu-22.04, windows-2022, macos-14]
 
     steps:
       - uses: actions/checkout@v4
@@ -24,12 +23,12 @@ jobs:
         with:
           python-version: '3.11'
 
-      - run: python cibuildlib.py ${{matrix.arch}}
+      - run: python cibuildlib.py
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{matrix.os}}${{matrix.arch}}
-          path: ./webview/build
+          name: ${{matrix.os}}
+          path: ./build
   release:
     runs-on: windows-latest
     needs: build
