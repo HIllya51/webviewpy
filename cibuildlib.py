@@ -17,6 +17,7 @@ if len(sys.argv) >= 2 and sys.argv[1] == "release":
     os.chdir(filepath)
     copy = lambda f, d: [
         print(os.path.abspath(d)),
+        print(os.path.abspath(f)),
         os.makedirs(d, exist_ok=True),
         shutil.copy(f, d),
     ]
