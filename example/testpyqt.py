@@ -1,10 +1,10 @@
-import os, sys, ctypes
+import os, sys
 
 sys.path.append(os.getcwd())
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 from webviewpy import Webview, webview_native_handle_kind_t
-from PyQt5.QtGui import QResizeEvent
+from PyQt5.QtGui import QResizeEvent, QWindow
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtWidgets import (
     QApplication,
@@ -25,6 +25,10 @@ class WebivewWidget(QWidget):
 
         self.webview.bind("__on_load", self.on_load)
         self.webview.init("window.__on_load(window.location)")
+        hwnd = self.webview.get_native_handle(
+            webview_native_handle_kind_t.WEBVIEW_NATIVE_HANDLE_KIND_UI_WIDGET
+        )
+        self.qwin = QWindow.fromWinId(hwnd)
 
     def on_load(self, location):
         print(location)
@@ -33,13 +37,7 @@ class WebivewWidget(QWidget):
         return getattr(self.webview, (name))
 
     def resizeEvent(self, a0: QResizeEvent) -> None:
-        hwnd = self.webview.get_native_handle(
-            webview_native_handle_kind_t.WEBVIEW_NATIVE_HANDLE_KIND_UI_WIDGET
-        )
-        r = QApplication.instance().devicePixelRatio()
-        ctypes.windll.User32.MoveWindow(
-            hwnd, 0, 0, int(r * a0.size().width()), int(r * a0.size().height()), True
-        )
+        self.qwin.resize(a0.size())
 
 
 if testQWebEngineView:
